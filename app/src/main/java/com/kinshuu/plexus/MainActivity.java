@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         BTNemergency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(MainActivity.this,com.kinshuu.plexus.PublicEmergency.class);
+                Intent intent= new Intent(MainActivity.this,com.kinshuu.plexus.Emergency.class);
                 startActivity(intent);
             }
         });
