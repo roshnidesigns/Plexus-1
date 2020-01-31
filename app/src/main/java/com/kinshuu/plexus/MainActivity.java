@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public static String mUsername="0",mUserEmail;
 
     //MainActivity UI
-    Button BTNsignout, BTNemergency;
+    Button BTNsignout, BTNemergency,BTNemergency2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(0));
         BTNsignout=findViewById(R.id.BTNsignout);
         BTNemergency=findViewById(R.id.BTNemergency);
-
+        BTNemergency2=findViewById(R.id.BTNemergency2);
 
         chirp = new ChirpSDK(this, CHIRP_APP_KEY, CHIRP_APP_SECRET);
         startService(new Intent(getApplicationContext(), Listener.class));
@@ -65,10 +65,19 @@ public class MainActivity extends AppCompatActivity {
         BTNemergency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent= new Intent(MainActivity.this,com.kinshuu.plexus.Emergency.class);
+                startActivity(intent);
+            }
+        });
+
+        BTNemergency2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent intent= new Intent(MainActivity.this,com.kinshuu.plexus.PublicEmergency.class);
                 startActivity(intent);
             }
         });
+
 
         BTNsignout.setOnClickListener(new View.OnClickListener() {
             @Override
