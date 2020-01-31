@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,9 +35,9 @@ public class Emergency extends AppCompatActivity {
     String TAG="MyLOGS";
     public static ChirpSDK chirp;
     private static final int RESULT_REQUEST_RECORD_AUDIO = 1;
-    String CHIRP_APP_KEY = "a425Bff1fE83BaFD9e5F6d5A3";
-    String CHIRP_APP_SECRET = "A0DFeB41c736196Fa82fBFCcAa36E334610Ea71bd128e7e9D5";
-    String CHIRP_APP_CONFIG = "GpEu5S5FtjVzSmhBNpDrmLU9Ojw4c2xcsrhoPuerCsqSNfoicEuPCx0iX1lNFMYN2ekd4+HAT1wXVvvgqaTrm7FXO3EKt6aDCEOYcZtc8oPSMNk83Q/UMFfdgimH5AYSbx9yFiuvoKAuhXA31VsiEfdYSLD82zXTgEjgTYyzje1BMRIEqXKV3fG6pT14vftbJ1gc3qJR1RW4+/g1bVqKo6zG7gHkC+qwzSrqQ1/63lA2wMQ8Cvu3mmMzvgFVWlsBUg++sxGaztNCX0F7Ig96oi7PGeVGZGj5nnicfJsL3RHH2siNwoILh9E6SkejXNGq5uq35juxz1ySslDGTOr2y0yvKxjfgC5JI2+01TLlXGPTY8q7cDpASP9rbSwHWoEu7HIxHgu/g1ZZTfo21HxAkjHcxg0Zj+25HkTCalQ/jbrB33yYEUUI+05l+dP0OU29SMeZ1G2xTmrzy2nerEzTOW9CECAu/X0Vy6Wk+qYScuW64uboqeQnSfer5qmDK44jNYuwAg9ZklpzkTKaIRD/2bpsBElAwwS5UvTI5u2uQ/obYopGHC6VB88Ird1Q41FGGnIfMYwmvRJfPpBa4TGvU8S/9NoNZF891m0FYvy0FoN2kxus+Xi6z7O2lvcEGON+aiiKenCC+xdAimpNEGVJyQH36AG6KsIz3iAJT+Q/lpBwbWerYf5s7SlNZhlkxeWQfb+X7p/SSNndfrxsuX5g3RhMKXbXvG3bQueQHzguaWi5ykqMWzioEQA/xGeRhPu1gYaMDXYmonLfX/WWEuEpEqhmSlNh/ePnqM85CMkXBPz0AbleD5Xe0nz+f/hO2iX09br1ymNpJ2PnhEwpAPffoGNNYrxceUxCYYEMImRMaBjskKxoGl5jxknvY9G5jn6kW16/91NApoeul75yRFdzqF5fYT68uxNTzlF9stX6ukvsDoWPr8EFWl0OY82pgUfRiGdQwyy/0f9k8SKD41Ptcyac0VVeiZcoLeuRtm3EJPk9bgMk7FpQmkTz/dOSXVCb4upARtDmGY1+v5nbsxNEocmC9aVlHWXyYKqzKjZzf15XPLMUGP5/HPLA+8bNs7G9MT+vWi5EhR/QMKaDykLPdQCKrDJvXdPxeKVriDIqRGim24EmheFz4lb2Q2apYkc4JCD4gnXKuvrTdhtBtHZx3A==";
+    public static String CHIRP_APP_KEY = "a425Bff1fE83BaFD9e5F6d5A3";
+    public static String CHIRP_APP_SECRET = "A0DFeB41c736196Fa82fBFCcAa36E334610Ea71bd128e7e9D5";
+    public static String CHIRP_APP_CONFIG = "GpEu5S5FtjVzSmhBNpDrmLU9Ojw4c2xcsrhoPuerCsqSNfoicEuPCx0iX1lNFMYN2ekd4+HAT1wXVvvgqaTrm7FXO3EKt6aDCEOYcZtc8oPSMNk83Q/UMFfdgimH5AYSbx9yFiuvoKAuhXA31VsiEfdYSLD82zXTgEjgTYyzje1BMRIEqXKV3fG6pT14vftbJ1gc3qJR1RW4+/g1bVqKo6zG7gHkC+qwzSrqQ1/63lA2wMQ8Cvu3mmMzvgFVWlsBUg++sxGaztNCX0F7Ig96oi7PGeVGZGj5nnicfJsL3RHH2siNwoILh9E6SkejXNGq5uq35juxz1ySslDGTOr2y0yvKxjfgC5JI2+01TLlXGPTY8q7cDpASP9rbSwHWoEu7HIxHgu/g1ZZTfo21HxAkjHcxg0Zj+25HkTCalQ/jbrB33yYEUUI+05l+dP0OU29SMeZ1G2xTmrzy2nerEzTOW9CECAu/X0Vy6Wk+qYScuW64uboqeQnSfer5qmDK44jNYuwAg9ZklpzkTKaIRD/2bpsBElAwwS5UvTI5u2uQ/obYopGHC6VB88Ird1Q41FGGnIfMYwmvRJfPpBa4TGvU8S/9NoNZF891m0FYvy0FoN2kxus+Xi6z7O2lvcEGON+aiiKenCC+xdAimpNEGVJyQH36AG6KsIz3iAJT+Q/lpBwbWerYf5s7SlNZhlkxeWQfb+X7p/SSNndfrxsuX5g3RhMKXbXvG3bQueQHzguaWi5ykqMWzioEQA/xGeRhPu1gYaMDXYmonLfX/WWEuEpEqhmSlNh/ePnqM85CMkXBPz0AbleD5Xe0nz+f/hO2iX09br1ymNpJ2PnhEwpAPffoGNNYrxceUxCYYEMImRMaBjskKxoGl5jxknvY9G5jn6kW16/91NApoeul75yRFdzqF5fYT68uxNTzlF9stX6ukvsDoWPr8EFWl0OY82pgUfRiGdQwyy/0f9k8SKD41Ptcyac0VVeiZcoLeuRtm3EJPk9bgMk7FpQmkTz/dOSXVCb4upARtDmGY1+v5nbsxNEocmC9aVlHWXyYKqzKjZzf15XPLMUGP5/HPLA+8bNs7G9MT+vWi5EhR/QMKaDykLPdQCKrDJvXdPxeKVriDIqRGim24EmheFz4lb2Q2apYkc4JCD4gnXKuvrTdhtBtHZx3A==";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,17 +45,31 @@ public class Emergency extends AppCompatActivity {
         setContentView(R.layout.activity_emergency);
 
         Button BTNsend= findViewById(R.id.BTNsend);
+
+        BTNsend.setEnabled(false);
         final EditText ETmsg= findViewById(R.id.ETmsg);
 
-        chirp = new ChirpSDK(this, CHIRP_APP_KEY, CHIRP_APP_SECRET);
+        ETmsg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                enableSubmitIfReady();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
         ChirpError error = chirp.setConfig(CHIRP_APP_CONFIG);
         if (error.getCode() == 0) {
             Log.v("ChirpSDK: ", "Configured ChirpSDK");
         } else {
             Log.e("ChirpError: ", error.getMessage());
         }
-
-        startService(new Intent(getApplicationContext(), Listener.class));
 
         BTNsend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +90,6 @@ public class Emergency extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private boolean isNetworkAvailable() {
@@ -99,6 +114,14 @@ public class Emergency extends AppCompatActivity {
                 Log.v("ChirpSDK: ", "Started ChirpSDK");
             }
         }
+    }
+
+    public void enableSubmitIfReady() {
+
+        ETmsg=findViewById(R.id.ETmsg);
+        BTNsend=findViewById(R.id.BTNsend);
+        boolean isReady = ETmsg.getText().toString().length() > 0;
+        BTNsend.setEnabled(isReady);
     }
 
     @Override

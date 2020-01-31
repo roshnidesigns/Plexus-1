@@ -20,6 +20,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
+import io.chirp.chirpsdk.ChirpSDK;
+
+import static com.kinshuu.plexus.Emergency.CHIRP_APP_KEY;
+import static com.kinshuu.plexus.Emergency.CHIRP_APP_SECRET;
+import static com.kinshuu.plexus.Emergency.chirp;
+
 public class MainActivity extends AppCompatActivity {
     //Constants
     String TAG="MyLOGS";
@@ -43,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
         BTNsignout=findViewById(R.id.BTNsignout);
         BTNemergency=findViewById(R.id.BTNemergency);
+
+
+        chirp = new ChirpSDK(this, CHIRP_APP_KEY, CHIRP_APP_SECRET);
+        startService(new Intent(getApplicationContext(), Listener.class));
 
         BTNemergency.setOnClickListener(new View.OnClickListener() {
             @Override

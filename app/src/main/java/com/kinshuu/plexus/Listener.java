@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 
 import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.chirp.chirpsdk.interfaces.ChirpEventListener;
 import io.chirp.chirpsdk.models.ChirpError;
@@ -25,7 +28,8 @@ import static com.kinshuu.plexus.Emergency.chirp;
 public class Listener extends Service {
 
     String TAG="MyLOGS";
-    String recieved="null";
+//    String recieved="null";
+    Set<String> recieved;
 
     private static final int NOTIF_ID = 1;
     private static final String NOTIF_CHANNEL_ID = "Channel_Id";
@@ -35,6 +39,7 @@ public class Listener extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind: ");
         // TODO: Return the communication channel to the service.
         ChirpError error = chirp.start(true, true);
         if (error.getCode() > 0) {
@@ -47,12 +52,26 @@ public class Listener extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
+
+        final Handler handler = new Handler();
+        final int delay = 5000; //milliseconds
+
+        Log.d(TAG, "onStartCommand: ");
         ChirpError error = chirp.start(true, true);
         if (error.getCode() > 0) {
             Log.e("ChirpError: ", error.getMessage());
         } else {
             Log.v(TAG, "Started ChirpSDK");
         }
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                //do something
+                recieved= new HashSet<>();
+                handler.postDelayed(this, delay);
+                Log.d(TAG, "run: variable reset");
+            }
+        }, delay);
 
         ChirpEventListener chirpEventListener = new ChirpEventListener() {
             @Override
@@ -63,7 +82,7 @@ public class Listener extends Service {
                     if(!isNetworkAvailable()) {
                         //sending w/o signal
                         Log.d(TAG, "onReceived: identifier is "+identifier);
-                        if(identifier.equals(recieved)){
+                        if(recieved.contains(identifier)){
                             Toast.makeText(Listener.this, "Repeated Receive, not forwarding", Toast.LENGTH_SHORT).show();
                         }
                         else {
@@ -76,7 +95,7 @@ public class Listener extends Service {
                                 Log.v("ChirpSDK: ", "Sent " + identifier);
                             }
                         }
-                        recieved=identifier;
+                        recieved.add(identifier);
                     }
                 } else {
                     Log.e("ChirpError: ", "Decode failed");
