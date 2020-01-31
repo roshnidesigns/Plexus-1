@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.telecom.Call;
 import android.text.TextUtils;
 import android.view.View;
@@ -32,6 +33,15 @@ public class PublicEmergency extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8)
+        {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            //your codes here
+
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_public_emergency);
         title = (EditText)findViewById(R.id.title);
@@ -74,12 +84,14 @@ public class PublicEmergency extends AppCompatActivity {
         //   String rname = name.getText().toString();
         String titles = title.getText().toString();
         String des = description.getText().toString();
-        String url = "http://localhost:8080/emergency/emergency/public/addPost";
+        String url = "http://172.27.49.95/emergency/emergency/public/addPost";
 
 
         RequestBody body = new FormBody.Builder()
                 .add("title", titles)
                 .add("description", des)
+                .add("name",MainActivity.mUsername)
+                .add("email",MainActivity.mUserEmail)
                 .build();
 
         OkHttpClient client = new OkHttpClient();
@@ -88,36 +100,33 @@ public class PublicEmergency extends AppCompatActivity {
                 .url(url)
                 .post(body)
                 .build();
-        Toast.makeText(getApplicationContext(), "Trying to Login", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Trying to Send Public Emergency", Toast.LENGTH_LONG).show();
         //Call call = client.newCall(request);
 
         client.newCall(request).enqueue(new Callback(){
 
             @Override
             public void onResponse(@NotNull okhttp3.Call call, @NotNull final Response response) throws IOException {
-                runOnUiThread(new Runnable(){
 
+
+                PublicEmergency.this.runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-                        PublicEmergency.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
 
-                                try {
-                                    carryPostahead(response.body().string());
-                                } catch (IOException e) {
 
-                                    e.printStackTrace();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+                        try {
+                            carryPostahead(response.body().string());
+                        } catch (IOException e) {
+
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
-            }
 
+            }
             @Override
             public void onFailure(@NotNull okhttp3.Call call, @NotNull IOException e) {
 
@@ -129,9 +138,9 @@ public class PublicEmergency extends AppCompatActivity {
     }
     private void carryPostahead(String r) throws JSONException {
 
-
-
-
+        Toast t = Toast.makeText(this.getApplicationContext(), r, Toast.LENGTH_LONG);
+        t.show();
+       return;
     }
 
 }
