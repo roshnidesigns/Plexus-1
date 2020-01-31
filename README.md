@@ -1,2 +1,4 @@
-# HackDoomna2020
-# --- HackDoomna 2020 -- # 
+# HackDoomna2020 - 
+
+Team - Bits Please!
+
