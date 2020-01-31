@@ -13,12 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.Arrays;
+import android.content.Intent;
+import android.os.Bundle;
+
 
 import io.chirp.chirpsdk.ChirpSDK;
 
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    public static String mUsername="0";
+    public static String mUsername="0",mUserEmail;
 
     //MainActivity UI
     Button BTNsignout, BTNemergency;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         BTNemergency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(MainActivity.this,com.kinshuu.plexus.Emergency.class);
+                Intent intent= new Intent(MainActivity.this,com.kinshuu.plexus.PublicEmergency.class);
                 startActivity(intent);
             }
         });
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onAuthStateChanged: Signed In");
                     Toast.makeText(MainActivity.this, "Welcome "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
                     mUsername=user.getDisplayName();
+                    mUserEmail = user.getEmail();
                 }
                 else{
                     // user is signed out
@@ -112,5 +114,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
+
     
 }
