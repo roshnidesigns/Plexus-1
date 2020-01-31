@@ -1,6 +1,7 @@
 package com.kinshuu.plexus;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static String mUsername="0";
 
     //MainActivity UI
-    Button BTNsignout;
+    Button BTNsignout, BTNemergency;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Working");
 
         BTNsignout=findViewById(R.id.BTNsignout);
+        BTNemergency=findViewById(R.id.BTNemergency);
+
+        BTNemergency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(MainActivity.this,com.kinshuu.plexus.Emergency.class);
+                startActivity(intent);
+            }
+        });
+
         BTNsignout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,12 +69,12 @@ public class MainActivity extends AppCompatActivity {
                 if(user!=null){
                     // user is signed in
                     Log.d(TAG, "onAuthStateChanged: Signed In");
-                    Toast.makeText(MainActivity.this, "Signed In", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Welcome "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
                     mUsername=user.getDisplayName();
                 }
                 else{
                     // user is signed out
-                    Toast.makeText(MainActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Please signin", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onAuthStateChanged: User is signed out.");
                     //OnSignedOutInitialise();
                     startActivityForResult(
