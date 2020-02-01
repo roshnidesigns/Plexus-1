@@ -28,6 +28,7 @@ The user is given an option to choose his emergency. Now if the device has acces
 * [Maven](https://dl.google.com/dl/android/maven2/index.html) - Dependency Management.
 * [Chirp](https://chirp.io/) - AudioQR technology.
 * [Google-NearbyConnections](https://developers.google.com/nearby/connections/overview) - For connecting to nearby android devices.
+* [Laravel](https://laravel.com/) - For Backend
 
 ## Contributing
 
