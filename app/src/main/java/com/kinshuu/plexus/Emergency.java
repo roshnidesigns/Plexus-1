@@ -233,7 +233,7 @@ public class Emergency extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RESULT_REQUEST_RECORD_AUDIO);
         } else {
-            // Start ChirpSDK sender and receiver, if no arguments are passed both sender and receiver are started
+
             ChirpError error = chirp.start(true, true);
             if (error.getCode() > 0) {
                 Log.e("ChirpError: ", error.getMessage());
