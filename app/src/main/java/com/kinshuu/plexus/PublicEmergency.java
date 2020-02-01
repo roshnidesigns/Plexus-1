@@ -133,12 +133,12 @@ public class PublicEmergency extends AppCompatActivity {
         String url = "http://172.27.49.95/emergency/emergency/public/addPost";
 
 
-//        RequestBody body = new FormBody.Builder()
-//                .add("title", titles)
-//                .add("description", des)
-//                .add("name",MainActivity.mUsername)
-//                .add("email",MainActivity.mUserEmail)
-//                .build();
+        RequestBody body = new FormBody.Builder()
+                .add("title", titles)
+                .add("description", des)
+                .add("name",MainActivity.mUsername)
+                .add("email",MainActivity.mUserEmail)
+                .build();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 1, stream);
         final byte[] bitmapdata = stream.toByteArray();

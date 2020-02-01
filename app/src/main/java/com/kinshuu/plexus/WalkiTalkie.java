@@ -83,7 +83,7 @@ public class WalkiTalkie extends ConnectionsActivity {
     @Nullable
     private Animator mCurrentAnimator;
 
-    ImageView img2, img1;
+    ImageView img2, img1, img3;
 
     private TextView mDebugLogView;
 
@@ -125,6 +125,7 @@ public class WalkiTalkie extends ConnectionsActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(0));
         mPreviousStateView = (TextView) findViewById(R.id.previous_state);
         mCurrentStateView = (TextView) findViewById(R.id.current_state);
+        img3 = findViewById(R.id.imageView3);
         img2 = findViewById(R.id.imageView2);
         img1 = findViewById(R.id.imageView);
         mDebugLogView = (TextView) findViewById(R.id.debug_log);
@@ -161,6 +162,7 @@ public class WalkiTalkie extends ConnectionsActivity {
     public void handleStart(View view){
 
         setState(State.SEARCHING);
+        bt.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -267,6 +269,7 @@ public class WalkiTalkie extends ConnectionsActivity {
             case SEARCHING:
                 disconnectFromAllEndpoints();
                 bt.setVisibility(View.INVISIBLE);
+                img3.setVisibility(View.INVISIBLE);
                 img1.setVisibility(View.VISIBLE);
                 img2.setVisibility(View.INVISIBLE);
                 startDiscovering();
