@@ -36,7 +36,6 @@ import io.chirp.chirpsdk.ChirpSDK;
 import io.chirp.chirpsdk.models.ChirpError;
 
 import static com.kinshuu.plexus.Listener.PhDirectory;
-import static com.kinshuu.plexus.MainActivity.mUsername;
 
 public class Emergency extends AppCompatActivity {
 
