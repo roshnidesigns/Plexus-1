@@ -57,11 +57,12 @@ public class Listener extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
 
+        Log.d(TAG, "onStartCommand: Adding numbers in database");
+
         PhDirectory.put("M","6265502674");
         PhDirectory.put("F","9730282700");
         PhDirectory.put("P","8956759927");
-
-
+        
         final Handler handler = new Handler();
         final int delay = 5000; //milliseconds
 

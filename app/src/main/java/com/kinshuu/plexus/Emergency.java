@@ -1,5 +1,6 @@
 package com.kinshuu.plexus;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,7 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -60,9 +61,17 @@ public class Emergency extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency);
 
+
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.SEND_SMS}, 101);
         }
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.drawable.ic_navbar);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setBackgroundDrawable(new ColorDrawable(0));
 
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
@@ -73,18 +82,22 @@ public class Emergency extends AppCompatActivity {
         }
 
         spinnerEmergency = findViewById(R.id.spinnerEmergency);
-        String[] spinnerEmergencylist = {"Other", "Medical", "Fire", "Police"};
+        String[] spinnerEmergencylist = {"Select Zone", "Medical", "Fire", "Police"};
         ArrayAdapter<String> spinnerEmergencyAdapter = new ArrayAdapter<>(Emergency.this, android.R.layout.simple_list_item_1, spinnerEmergencylist);
         spinnerEmergencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEmergency.setAdapter(spinnerEmergencyAdapter);
         spinnerEmergency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (parent.getItemAtPosition(position).toString().equals("Other"))
+                ETmsg=findViewById(R.id.ETmsg);
+                if (parent.getItemAtPosition(position).toString().equals("Select Zone")){
                     select = "z";
+                    ETmsg.setFocusableInTouchMode(true);
+                }
                 else {
                     Log.d(TAG, "onItemSelected: in else");
                     select = parent.getItemAtPosition(position).toString().charAt(0) + "";
+                    ETmsg.setFocusable(false);
                     Log.d(TAG, "onItemSelected: Select is "+select);
                     fusedLocationClient.getLastLocation().addOnSuccessListener(Emergency.this, new OnSuccessListener<Location>() {
                         @Override
@@ -109,7 +122,6 @@ public class Emergency extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
                 Toast.makeText(Emergency.this, "Nothing selectde", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onNothingSelected: nothing selected");
-
             }
         });
 
@@ -117,7 +129,6 @@ public class Emergency extends AppCompatActivity {
 
         Button BTNsend = findViewById(R.id.BTNsend);
 
-//        BTNsend.setEnabled(false);
         final EditText ETmsg = findViewById(R.id.ETmsg);
 
         ETmsg.addTextChangedListener(new TextWatcher() {
@@ -169,11 +180,13 @@ public class Emergency extends AppCompatActivity {
                         Log.d(TAG, "onClick: identifier is "+identifier);
                         Toast.makeText(Emergency.this, "Network Available, sending text and Firebase.", Toast.LENGTH_SHORT).show();
                         SmsManager smsManager = SmsManager.getDefault();
-                        String number = PhDirectory.get(identifier.charAt(0));
+                        Log.d(TAG, "onClick: charAt(0) is "+identifier.charAt(0)+"");
+                        String number = PhDirectory.get(identifier.charAt(0)+"");
+                        Log.d(TAG, "onClick: Number is "+number);
                         mlat = identifier.substring(1, 4);
                         mlong = identifier.substring(4, 7);
                         Toast.makeText(Emergency.this, "lat is " + mlat + "long is " + mlong, Toast.LENGTH_SHORT).show();
-                        smsManager.sendTextMessage(number, null, "I am sending my location for precaution for my safety. lat = 23.17" + mlat + " and long= 80.02" + mLong, null, null);
+                        smsManager.sendTextMessage(number, null, "I am sending my location for precaution for my safety. lat = 23.17" + mlat + " and long= 80.02" + mlong, null, null);
 //                        Log.d(TAG, "I am sending my location for precaution for my safety. lat = 23.17" + mlat + " and long= 80.02"+ mlong );
                     }
                 }
@@ -253,17 +266,6 @@ public class Emergency extends AppCompatActivity {
                 }
                 return;
             }
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        chirp.stop();
-        try {
-            chirp.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
