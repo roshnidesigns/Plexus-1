@@ -33,7 +33,7 @@ The user is given an option to choose his emergency. Now if the device has acces
 
 I am open to contributions. Contact me on [Facebook](https://www.facebook.com/mishraprateekaries) for any queries.
 
-See also the list of [contributors](https://github.com/thesmallstar/SilverBook/Plexus/contributors) who participated in the project.
+See also the list of [contributors](https://github.com/thesmallstar/Plexus/contributors) who participated in the project.
 
 ## Acknowledgements
 * We are very thankful to IIITDM Jabalpur for conducting HackDoomna - invicta20 and giving us such marvellous opportunities to build upon our existing skills and showcase our talent.
