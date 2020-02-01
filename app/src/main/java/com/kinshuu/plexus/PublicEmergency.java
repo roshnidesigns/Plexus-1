@@ -45,7 +45,7 @@ import okhttp3.Response;
 public class PublicEmergency extends AppCompatActivity {
 
     EditText title,description;
-    Bitmap bitmap;
+    Bitmap bitmap=null;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -56,6 +56,8 @@ public class PublicEmergency extends AppCompatActivity {
              bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                Toast t = Toast.makeText(this.getApplicationContext(), "Image Has been added", Toast.LENGTH_SHORT);
+                t.show();
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -74,7 +76,6 @@ public class PublicEmergency extends AppCompatActivity {
 
 
 
-        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
 
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -94,8 +95,10 @@ public class PublicEmergency extends AppCompatActivity {
         Intent intents = getIntent();
         description = (EditText)findViewById(R.id.des);
         Button submitButton = (Button) findViewById(R.id.submit);
+        Button addPhoto = (Button) findViewById(R.id.addPhoto);
         Toast t = Toast.makeText(this.getApplicationContext(), "Public Emergency", Toast.LENGTH_SHORT);
         t.show();
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,6 +106,12 @@ public class PublicEmergency extends AppCompatActivity {
             }
         });
 
+        addPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
+            }
+        });
     }
     boolean isEmpty(EditText text) {
         CharSequence str = text.getText().toString();
@@ -133,25 +142,36 @@ public class PublicEmergency extends AppCompatActivity {
         String url = "http://172.27.49.95/emergency/emergency/public/addPost";
 
 
-        RequestBody body = new FormBody.Builder()
-                .add("title", titles)
-                .add("description", des)
-                .add("name",MainActivity.mUsername)
-                .add("email",MainActivity.mUserEmail)
-                .build();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 1, stream);
-        final byte[] bitmapdata = stream.toByteArray();
-        String bitmapdatas = Base64.encodeToString(bitmapdata, Base64.DEFAULT);
-
-
-//        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-//                .addFormDataPart("image",bitmapdatas)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               20
-//                .addFormDataPart("description", des)
-//                .addFormDataPart("name",MainActivity.mUsername)
-//                .addFormDataPart("email",MainActivity.mUserEmail)
+//        RequestBody body = new FormBody.Builder()
+//                .add("title", titles)
+//                .add("description", des)
+//                .add("name",MainActivity.mUsername)
+//                .add("email",MainActivity.mUserEmail)
 //                .build();
 
+        RequestBody body;
+
+if(bitmap==null){
+     body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("title", titles)
+            .addFormDataPart("description", des)
+            .addFormDataPart("name", MainActivity.mUsername)
+            .addFormDataPart("email", MainActivity.mUserEmail)
+            .build();
+}else {
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 1, stream);
+    final byte[] bitmapdata = stream.toByteArray();
+
+     body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("image", "filename.jpeg",
+                    RequestBody.create(MediaType.parse("image/*jpeg"), bitmapdata))
+            .addFormDataPart("title", titles)
+            .addFormDataPart("description", des)
+            .addFormDataPart("name", MainActivity.mUsername)
+            .addFormDataPart("email", MainActivity.mUserEmail)
+            .build();
+}
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
