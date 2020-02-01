@@ -96,6 +96,7 @@ public class Emergency extends AppCompatActivity {
                 else {
                     Log.d(TAG, "onItemSelected: in else");
                     select = parent.getItemAtPosition(position).toString().charAt(0) + "";
+                    ETmsg.setText("");
                     ETmsg.setFocusable(false);
                     Log.d(TAG, "onItemSelected: Select is "+select);
                     fusedLocationClient.getLastLocation().addOnSuccessListener(Emergency.this, new OnSuccessListener<Location>() {
@@ -108,7 +109,7 @@ public class Emergency extends AppCompatActivity {
                                 mlat = location.getLatitude() + "";
                                 mlong = location.getLongitude() + "";
 //                              BTNsend.setEnabled(true);
-                                Toast.makeText(Emergency.this, "Selected is " + select, Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(Emergency.this, "Selected is " + select, Toast.LENGTH_SHORT).show();
                                 Log.d(TAG, "onSuccess: Location found");
                                 Log.d(TAG, "onSuccess: Lat is "+mlat+"Long is "+mlong);
                             }
@@ -119,7 +120,7 @@ public class Emergency extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                Toast.makeText(Emergency.this, "Nothing selectde", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(Emergency.this, "Nothing selectde", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onNothingSelected: nothing selected");
             }
         });
@@ -158,9 +159,16 @@ public class Emergency extends AppCompatActivity {
                 if (select.equals("z"))
                     msg = ETmsg.getText().toString();
                 else {
-                    msg = select + mlat.substring(5, 8) + mlong.substring(5, 8);
-                    Log.d(TAG, "onSuccess: Lat is "+mlat.substring(5, 8)+"Long is "+mlong.substring(5, 8));
-                    Log.d(TAG, "onClick: msg is "+msg);
+                    int temp = Math.min(mlat.length(), 8);
+                    try {
+
+                        msg = select + mlat.substring(5, 8) + mlong.substring(5, 8);
+                    }
+                    catch (Exception e){
+                        msg=select+getResources().getString(R.string.dlat)+getResources().getString(R.string.dlong);
+                    }
+//                    Log.d(TAG, "onSuccess: Lat is "+mlat.substring(5, 8)+"Long is "+mlong.substring(5, 8));
+//                    Log.d(TAG, "onClick: msg is "+msg);
                 }
                 identifier = msg;
                 if (!isNetworkAvailable()) {
@@ -177,14 +185,20 @@ public class Emergency extends AppCompatActivity {
                 } else {
                     if (!select.equals("z")) {
                         Log.d(TAG, "onClick: identifier is "+identifier);
-                        Toast.makeText(Emergency.this, "Network Available, sending text and Firebase.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Emergency.this, "Network Available, sending text", Toast.LENGTH_SHORT).show();
                         SmsManager smsManager = SmsManager.getDefault();
                         Log.d(TAG, "onClick: charAt(0) is "+identifier.charAt(0)+"");
                         String number = PhDirectory.get(identifier.charAt(0)+"");
                         Log.d(TAG, "onClick: Number is "+number);
-                        mlat = identifier.substring(1, 4);
-                        mlong = identifier.substring(4, 7);
-                        Toast.makeText(Emergency.this, "lat is " + mlat + "long is " + mlong, Toast.LENGTH_SHORT).show();
+                        try {
+                            mlat = identifier.substring(1, 4);
+                            mlong = identifier.substring(4, 7);
+                        }
+                        catch (Exception e){
+                            mlat = getResources().getString(R.string.dlat);
+                            mlong = getResources().getString(R.string.dlong);
+                        }
+//                        Toast.makeText(Emergency.this, "lat is " + mlat + "long is " + mlong, Toast.LENGTH_SHORT).show();
                         smsManager.sendTextMessage(number, null, "I am sending my location for precaution for my safety. lat = 23.17" + mlat + " and long= 80.02" + mlong, null, null);
 //                        Log.d(TAG, "I am sending my location for precaution for my safety. lat = 23.17" + mlat + " and long= 80.02"+ mlong );
                     }
