@@ -27,6 +27,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +83,7 @@ public class WalkiTalkie extends ConnectionsActivity {
     @Nullable
     private Animator mCurrentAnimator;
 
+    ImageView img2, img1;
 
     private TextView mDebugLogView;
 
@@ -123,9 +125,11 @@ public class WalkiTalkie extends ConnectionsActivity {
         actionBar.setBackgroundDrawable(new ColorDrawable(0));
         mPreviousStateView = (TextView) findViewById(R.id.previous_state);
         mCurrentStateView = (TextView) findViewById(R.id.current_state);
-
+        img2 = findViewById(R.id.imageView2);
+        img1 = findViewById(R.id.imageView);
         mDebugLogView = (TextView) findViewById(R.id.debug_log);
-        mDebugLogView.setVisibility(DEBUG ? View.VISIBLE : View.GONE);
+        mDebugLogView.setVisibility(View.INVISIBLE);
+        //mDebugLogView.setVisibility(DEBUG ? View.VISIBLE : View.GONE);
         mDebugLogView.setMovementMethod(new ScrollingMovementMethod());
 
         mName = generateRandomName();
@@ -210,6 +214,9 @@ public class WalkiTalkie extends ConnectionsActivity {
         Toast.makeText(
                 this, getString(R.string.toast_connected, endpoint.getName()), Toast.LENGTH_SHORT)
                 .show();
+
+        img1.setVisibility(View.INVISIBLE);
+        img2.setVisibility(View.VISIBLE);
         setState(State.CONNECTED);
     }
 
@@ -218,6 +225,8 @@ public class WalkiTalkie extends ConnectionsActivity {
         Toast.makeText(
                 this, getString(R.string.toast_disconnected, endpoint.getName()), Toast.LENGTH_SHORT)
                 .show();
+        img1.setVisibility(View.VISIBLE);
+        img2.setVisibility(View.INVISIBLE);
         setState(State.SEARCHING);
     }
 
@@ -257,6 +266,9 @@ public class WalkiTalkie extends ConnectionsActivity {
         switch (newState) {
             case SEARCHING:
                 disconnectFromAllEndpoints();
+                bt.setVisibility(View.INVISIBLE);
+                img1.setVisibility(View.VISIBLE);
+                img2.setVisibility(View.INVISIBLE);
                 startDiscovering();
                 startAdvertising();
                 break;
